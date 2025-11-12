@@ -2,7 +2,7 @@ options {
     directory "/var/cache/bind";
 
     // IP du serveur DNS
-    listen-on { 127.0.0.1; 192.168.100.128; };
+    listen-on { 127.0.0.1; 192.168.100.134; };
     listen-on-v6 { none; };
 
     // Root hints par défaut
