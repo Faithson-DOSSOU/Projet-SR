@@ -1,0 +1,46 @@
+// Réseaux autorisés à interroger ET à faire de la récursion
+acl "trusted" {
+    192.168.1.0/24;    // ADM Paris
+    172.16.10.0/24;    // LAN Paris
+    192.168.2.0/24;    // ADM Madrid
+    172.16.20.0/24;    // LAN Madrid
+    10.8.0.0/24;       // VPN nomades
+    127.0.0.1;         // local
+    192.168.100.0/24;  // DMZ (DNS/Reverse-Proxy)
+};
+
+// VUE 1 : primaire interne (+ récursion limitée aux réseaux "trusted")
+view "internal-primary" {
+    match-clients { "trusted"; };
+    recursion yes;
+    allow-query     { "trusted"; };
+    allow-recursion { "trusted"; };
+    allow-transfer  { none; };
+
+    // Zone interne de l'entreprise
+    zone "home.arpa" {
+        type master;
+        file "/etc/bind/zones/db.home.arpa";
+        allow-update { none; };
+    };
+
+    // Zones inverses (DMZ + sites + VPN)
+    zone "100.168.192.in-addr.arpa" { type master; file "/etc/bind/zones/db.192.168.100"; };
+    zone "1.168.192.in-addr.arpa"   { type master; file "/etc/bind/zones/db.192.168.1"; };
+    zone "2.168.192.in-addr.arpa"   { type master; file "/etc/bind/zones/db.192.168.2"; };
+    zone "10.16.172.in-addr.arpa"   { type master; file "/etc/bind/zones/db.172.16.10"; };
+    zone "20.16.172.in-addr.arpa"   { type master; file "/etc/bind/zones/db.172.16.20"; };
+    zone "0.8.10.in-addr.arpa"      { type master; file "/etc/bind/zones/db.10.8.0"; };
+};
+
+// VUE 2 : recursor cache-only pour le reste du monde (aucune fuite d’infos internes)
+view "recursor" {
+    match-clients { any; };
+    recursion yes;
+    allow-query { any; };
+    allow-recursion { any; };
+    allow-transfer { none; };
+
+    // Pas de zones internes ici. Cache pur.
+    // forwarders { 1.1.1.1; 9.9.9.9; };
+};

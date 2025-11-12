@@ -1,0 +1,4 @@
+$TTL 86400
+@   IN SOA dns1.home.arpa. admin.home.arpa. (
+        2025111101 3600 900 1209600 86400 )
+    IN NS  dns1.home.arpa.

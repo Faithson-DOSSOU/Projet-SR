@@ -1,0 +1,18 @@
+options {
+    directory "/var/cache/bind";
+
+    // IP du serveur DNS
+    listen-on { 127.0.0.1; 192.168.100.128; };
+    listen-on-v6 { none; };
+
+    // Root hints par défaut
+    dnssec-validation yes;
+
+    // Durcissement minimum
+    version "unknown";
+    minimal-responses yes;
+    auth-nxdomain no;
+    rate-limit {
+        responses-per-second 15;
+    };
+};

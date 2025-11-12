@@ -1,0 +1,19 @@
+$TTL 86400
+@   IN  SOA dns1.home.arpa. admin.home.arpa. (
+        2025111101 ; Serial YYYYMMDDnn
+        3600       ; Refresh 1h
+        900        ; Retry   15m
+        1209600    ; Expire  14j
+        86400 )    ; Minimum 1j
+
+    IN  NS  dns1.home.arpa.
+
+; Serveurs
+dns1    IN  A   192.168.100.134
+
+; Publication Web
+rp      IN  A   192.168.100.132
+www     IN  CNAME rp.home.arpa.
+
+; Back-end web interne (si besoin d’accès direct)
+web1    IN  A   10.9.0.128
